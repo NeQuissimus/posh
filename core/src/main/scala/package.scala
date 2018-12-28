@@ -1,3 +1,9 @@
 package nequi
 
-package object posh extends ErrorMessages
+package object posh {
+  object implicits
+      extends combinators.CombinatorErrors
+      with combinators.CombinatorImplicits
+      with iterable.IterableErrors
+      with iterable.IterableImplicits
+}
