@@ -39,7 +39,8 @@ lazy val commonSettings = Seq(
     "-Ywarn-unused:params", // Warn if a value parameter is unused.
     "-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
     "-Ywarn-unused:privates", // Warn if a private member is unused.
-    "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
+    "-Ywarn-value-discard", // Warn when non-Unit expression results are unused.
+    "-Ymacro-annotations" // Enable macros
   )
 )
 
@@ -48,6 +49,12 @@ lazy val core = (project in file("core"))
   .settings(
     name := "posh-core"
   )
+
+lazy val auto = (project in file("auto"))
+  .settings(
+    name := "posh-auto"
+  )
+  .dependsOn(macros)
 
 lazy val macros = (project in file("macros"))
   .settings(
