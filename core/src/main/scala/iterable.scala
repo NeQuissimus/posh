@@ -6,6 +6,7 @@ trait IterableRefinement extends Refinement
 final case class Empty()             extends IterableRefinement
 final case class MinSize[A <: Int]() extends IterableRefinement
 final case class MaxSize[A <: Int]() extends IterableRefinement
+final case class Size[A <: Int]()    extends IterableRefinement
 
 trait IterableImplicits {
   implicit def emptyRefined[A](a: A)(implicit A: A => Iterable[_],
@@ -29,6 +30,14 @@ trait IterableImplicits {
       case x if x.size <= valueOf[B] => Right(Refined[A, MaxSize[B]](a))
       case x                         => Left(E.message(x))
     }
+
+  implicit def sizeRefined[A, B <: Int](
+    a: A
+  )(implicit A: A => Iterable[_], b: ValueOf[B], E: ErrorMessage[A, MaxSize[B]]): Either[String, A Refined Size[B]] =
+    a match {
+      case x if x.size == valueOf[B] => Right(Refined[A, Size[B]](a))
+      case x                         => Left(E.message(x))
+    }
 }
 
 trait IterableErrors {
@@ -37,6 +46,8 @@ trait IterableErrors {
     ErrorMessage[A, MaxSize[B]](a => s"${a} contains more than ${valueOf[B]} elements")
   implicit def iterableMinSizeError[A, B <: Int: ValueOf] =
     ErrorMessage[A, MinSize[B]](a => s"${a} contains less than ${valueOf[B]} elements")
+  implicit def iterableSizeError[A, B <: Int: ValueOf] =
+    ErrorMessage[A, Size[B]](a => s"${a} does not contain ${valueOf[B]} elements")
 }
 
 object implicits extends IterableImplicits with IterableErrors
